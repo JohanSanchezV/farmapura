@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <head th:replace="layout/plantilla :: head"></head>
+    <body>
+        <header th:replace="layout/plantilla :: header"></header>
+
+        <main class="container py-4">
+            <h2 class="h4 mb-3">Carrito</h2>
+
+            <div class="row g-4">
+                <section class="col-lg-8">
+                    <form th:action="@{/carrito/actualizar}" method="post">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Producto</th><th style="width:140px">Cantidad</th><th>Precio</th><th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="it : ${items}">
+                                        <td th:text="${it.producto.nombre}">Nombre</td>
+                                        <td>
+                                            <input class="form-control" type="number" min="0"
+                                                   th:name="${'qty_' + it.producto.idProducto}"
+                                                   th:value="${it.cantidad}">
+                                        </td>
+                                        <td th:text="'₡ ' + ${#numbers.formatDecimal(it.producto.precio,1,'COMMA',2,'POINT')}">₡0</td>
+                                        <td th:text="'₡ ' + ${#numbers.formatDecimal(it.subtotal,1,'COMMA',2,'POINT')}">₡0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-secondary">Actualizar</button>
+                            <form th:action="@{/carrito/vaciar}" method="post">
+                                <button class="btn btn-outline-danger">Vaciar</button>
+                            </form>
+                        </div>
+                    </form>
+                </section>
+
+                <aside class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Resumen</h5>
+                            <p class="fs-5 fw-bold" th:text="'Total: ₡ ' + ${#numbers.formatDecimal(total,1,'COMMA',2,'POINT')}">Total</p>
+
+                            <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#loginModal"
+                                    sec:authorize="isAnonymous()">Pagar</button>
+                            <form th:action="@{/carrito/pagar}" method="post" sec:authorize="isAuthenticated()">
+                                <button class="btn btn-success w-100">Pagar</button>
+                            </form>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+
+        <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body text-center p-4">
+                        <h4 class="mb-3">Iniciar sesión para proceder con la compra</h4>
+                        <div class="d-grid gap-2">
+                            <a class="btn btn-success btn-lg" th:href="@{/login}">Iniciar sesión</a>
+                            <a class="btn btn-outline-secondary btn-lg" th:href="@{/registro}">Registrarse</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer th:replace="layout/plantilla :: footer"></footer>
+    </body>
+</html>

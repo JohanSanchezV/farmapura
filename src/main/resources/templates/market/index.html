@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="~{layout/plantilla :: head}"></head>
+    <body>
+        <header th:replace="~{layout/plantilla :: header}"></header>
+
+        <main class="container py-4">
+            <!-- HERO -->
+            <div class="p-4 bg-white rounded shadow-sm">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-6">
+                        <h1 class="display-5 fw-bold">Tu salud a un clic</h1>
+                        <p class="lead">Compra tus productos de farmacia de forma rápida y segura.</p>
+                        <a class="btn btn-success btn-lg" th:href="@{/productos}">Comprar ahora</a>
+                    </div>
+                    <div class="col-md-6">
+                        <img class="img-fluid rounded" th:src="@{/images/Farmacia.png}" alt="Farmacia"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DESTACADOS -->
+            <section class="mt-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 m-0">Productos populares</h2>
+                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/productos}">Ver todos</a>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-12 col-sm-6 col-lg-3" th:each="p : ${destacados}">
+                        <div class="card h-100 shadow-sm">
+                            <img th:if="${p.rutaImagen}" th:src="${p.rutaImagen}" class="card-img-top"
+                                 alt="Imagen del producto" style="object-fit:cover;height:160px;">
+                            <div class="card-body">
+                                <h6 class="card-title mb-1" th:text="${p.nombre}">Producto</h6>
+                                <small class="text-muted" th:text="${p.categoria != null ? p.categoria.nombre : '-'}">Categoría</small>
+                                <p class="fw-semibold mt-2 mb-3"
+                                   th:text="'₡ ' + ${#numbers.formatDecimal(p.precio, 1, 'COMMA', 2, 'POINT')}">₡0,00</p>
+
+                                <form th:action="@{/carrito/agregar}" method="post" class="d-flex gap-2">
+                                    <input type="hidden" name="idProducto" th:value="${p.idProducto}">
+                                    <input type="number" name="cantidad" value="1" min="1"
+                                           class="form-control form-control-sm" style="width:80px">
+                                    <button class="btn btn-success btn-sm">Agregar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12" th:if="${#lists.isEmpty(destacados)}">
+                        <div class="alert alert-info mb-0">
+                            Aún no hay productos destacados. Visita la sección <a th:href="@{/productos}">Productos</a>.
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer th:replace="~{layout/plantilla :: footer}"></footer>
+    </body>
+</html>
