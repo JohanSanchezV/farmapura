@@ -12,7 +12,6 @@ public interface FirebaseStorageService {
 
     public String cargaImagen(MultipartFile archivoLocalCliente, String carpeta, Long id);
 
-    //El BuketName es el <id_del_proyecto> + ".appspot.com"
     final String BucketName = "farmapura-cdf27.firebasestorage.app";
 
     //Esta es la ruta básica de este proyecto
@@ -22,5 +21,5 @@ public interface FirebaseStorageService {
     final String rutaJsonFile = "firebase";
     
     //El nombre del archivo Json
-    final String archivoJsonFile = "farmapura-cdf27-firebase-adminsdk-fbsvc-c70d18fe8f.json";
+    final String archivoJsonFile = "farmapura-cdf27-firebase-adminsdk-fbsvc-954185b2cd.json";
 }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <main th:fragment="content">
+            <h1 th:text="${salida.idSalida == null ? 'Nueva Salida' : 'Editar Salida'}"></h1>
+            <form th:action="@{/admin/inventario/salidas/guardar}" th:object="${salida}" method="post" class="row g-3">
+                <input type="hidden" th:field="*{idSalida}"/>
+
+                <div class="col-md-6">
+                    <label class="form-label">Producto</label>
+                    <select class="form-select" th:field="*{producto.idProducto}" required>
+                        <option value="" disabled selected>Seleccione…</option>
+                        <option th:each="p : ${productos}" th:value="${p.idProducto}" th:text="${p.nombre}"></option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Cantidad</label>
+                    <input class="form-control" type="number" min="1" th:field="*{cantidad}" required>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Motivo</label>
+                    <select class="form-select" th:field="*{motivo}" required>
+                        <option th:each="m : ${T(com.proyecto.domain.MotivoSalida).values()}"
+                                th:value="${m}" th:text="${m}"></option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Fecha</label>
+                    <input class="form-control" type="date" th:field="*{fecha}">
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">Observación</label>
+                    <input class="form-control" th:field="*{observacion}" maxlength="400">
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/inventario/salidas}">Cancelar</a>
+                </div>
+            </form>
+        </main>
+    </body>
+</html>

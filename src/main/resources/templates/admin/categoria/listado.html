@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="layout/plantilla :: head"></head>
     <body>
-        <header th:replace="layout/plantilla :: header"></header>
-
-        <main class="container py-4">
+        <section th:fragment="content">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="h5 m-0">Gestión de Categorías</h2>
+                <h1 class="mb-0">Gestión de Categorías</h1>
                 <a class="btn btn-success" th:href="@{/admin/categoria/nuevo}">
-                    <i class="fas fa-plus"></i> Añadir Categoría
+                    <i class="bi bi-plus-lg"></i> Nueva Categoría
                 </a>
             </div>
-            <div th:replace="admin/categoria/fragmentos :: tabla(${categorias})"></div>
-        </main>
 
-        <footer th:replace="layout/plantilla :: footer"></footer>
+            <div th:replace="~{admin/categoria/fragmentos :: tablaCategorias(${categorias}, ${_csrf})}"></div>
+            <a class="btn btn-outline-secondary mt-2" th:href="@{/admin/producto/listado}">← Volver a Productos</a>
+        </section>
     </body>
 </html>

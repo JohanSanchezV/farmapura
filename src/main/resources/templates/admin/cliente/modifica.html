@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <body th:fragment="content">
+        <h1 th:text="${cliente.idCliente == null ? 'Nuevo Cliente' : 'Editar Cliente'}">Cliente</h1>
+        <div class="mt-3" th:replace="~{admin/cliente/fragmentos :: formCliente(${cliente}, ${usuarios}, ${_csrf})}"></div>
+    </body>
+</html>

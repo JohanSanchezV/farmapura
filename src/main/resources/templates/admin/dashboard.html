@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <section th:fragment="content">
+            <h1 class="display-6 mb-3">Panel de Administración</h1>
+
+            <div class="row g-4">
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card card-kpi kpi-a p-4 text-center">
+                        <small class="text-muted">Total de Productos</small>
+                        <div class="display-4 fw-bold" th:text="${totalProductos}">0</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card card-kpi kpi-b p-4 text-center">
+                        <small class="text-muted">Productos por Vencer (30 días)</small>
+                        <div class="display-4 fw-bold" th:text="${porVencer}">0</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card card-kpi kpi-c p-4 text-center">
+                        <small class="text-muted">Productos con Bajo Stock</small>
+                        <div class="display-4 fw-bold" th:text="${bajoReorden}">0</div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="card card-kpi kpi-d p-4 text-center">
+                        <small class="text-muted">Fecha Última Venta</small>
+                        <div class="fs-4" th:text="${#temporals.format(fechaUltimaVenta,'dd/MM/yyyy HH:mm')}">—</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

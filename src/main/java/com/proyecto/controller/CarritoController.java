@@ -51,7 +51,7 @@ public class CarritoController {
         model.addAttribute("total", total);
         model.addAttribute("tituloVista", "Carrito");
         model.addAttribute("tituloPagina", "Carrito · Farmapura");
-        return "market/carrito"; // NUEVA vista pública
+        return "market/carrito";
     }
 
     @PostMapping("/actualizar")

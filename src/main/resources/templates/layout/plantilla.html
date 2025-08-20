@@ -25,25 +25,20 @@
 
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <ul class="navbar-nav me-auto">
-                            <!-- Link a productos (público/cliente) -->
                             <li class="nav-item" sec:authorize="!hasRole('ADMIN')">
                                 <a class="nav-link" th:href="@{/productos}">Productos</a>
                             </li>
 
-                            <!-- Link a CRUD (admin) -->
                             <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                                 <a class="nav-link" th:href="@{/admin/producto/listado}">Productos</a>
                             </li>
 
-                            <!-- Panel admin -->
                             <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                                 <a class="nav-link" th:href="@{/admin}">Administración</a>
                             </li>
                         </ul>
 
-                        <!-- DERECHA -->
                         <ul class="navbar-nav ms-auto align-items-center">
-                            <!-- Carrito SIEMPRE visible -->
                             <li class="nav-item me-2">
                                 <a th:href="@{/carrito}" class="nav-link position-relative" title="Carrito">
                                     <i class="fas fa-shopping-cart"></i>
@@ -52,7 +47,6 @@
                                 </a>
                             </li>
 
-                            <!-- Invitado -->
                             <li class="nav-item" sec:authorize="isAnonymous()">
                                 <a class="nav-link" th:href="@{/login}">
                                     <i class="fas fa-user-clock"></i> Login

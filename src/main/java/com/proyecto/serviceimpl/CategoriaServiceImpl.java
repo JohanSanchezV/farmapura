@@ -37,7 +37,6 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Override
     @Transactional
     public Categoria guardar(Categoria categoria, MultipartFile imagen) {
-        // 1) persistir para tener ID
         categoria = categoriaDao.save(categoria);
 
         if (imagen != null && !imagen.isEmpty()) {

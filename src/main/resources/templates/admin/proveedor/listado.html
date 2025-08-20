@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <section th:fragment="content">
+            <div th:replace="~{admin/proveedor/fragmentos :: toolbarProveedores()}"></div>
+
+            <div th:replace="~{admin/proveedor/fragmentos :: filtroProveedores(${filtroNombre})}"></div>
+
+            <div th:replace="~{admin/proveedor/fragmentos :: tablaProveedores(${proveedores}, ${_csrf})}"></div>
+        </section>
+    </body>
+</html>

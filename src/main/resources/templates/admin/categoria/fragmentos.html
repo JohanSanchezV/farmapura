@@ -1,46 +1,67 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
     <body>
-        <div th:fragment="tabla(categorias)">
+
+        <section th:fragment="tablaCategorias(categorias, _csrf)">
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
-                    <thead class="table-dark">
+                    <thead class="table-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Imagen</th>
+                            <th style="width:80px">Imagen</th>
                             <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>Acciones</th>
+                            <th style="width:200px">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="c : ${categorias}">
-                            <td th:text="${c.idCategoria}">1</td>
-                            <td style="width:90px">
-                                <img th:if="${c.rutaImagen}" th:src="${c.rutaImagen}" class="img-thumbnail" alt="img"/>
-                            </td>
-                            <td th:text="${c.nombre}">Antiinflamatorios</td>
-                            <td th:text="${c.descripcion}">Desc</td>
                             <td>
-                                <div class="btn-group">
-                                    <a class="btn btn-sm btn-outline-primary"
-                                       th:href="@{'/admin/categoria/modificar/' + ${c.idCategoria}}">
-                                        <i class="fas fa-pen"></i> Editar
-                                    </a>
-                                    <form th:action="@{'/admin/categoria/eliminar/' + ${c.idCategoria}}"
-                                          method="post"
-                                          onsubmit="return confirm('¿Eliminar la categoría?');">
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-trash"></i> Eliminar
-                                        </button>
-                                    </form>
-                                </div>
+                                <img th:if="${c.rutaImagen != null}" th:src="${c.rutaImagen}" alt=""
+                                     style="height:48px;width:48px;object-fit:cover;border-radius:8px">
+                                <div th:if="${c.rutaImagen == null}" class="bg-light border rounded" style="height:48px;width:48px"></div>
+                            </td>
+                            <td th:text="${c.nombre}">Analgesicos</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" th:href="@{'/admin/categoria/modificar/' + ${c.idCategoria}}">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
+                                <form th:action="@{'/admin/categoria/eliminar/' + ${c.idCategoria}}" method="post" class="d-inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar esta categoría?');">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
+        </section>
+
+        <section th:fragment="formCategoria(categoria, _csrf)">
+            <form th:action="@{/admin/categoria/guardar}" method="post" enctype="multipart/form-data"
+                  th:object="${categoria}" class="row g-3">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="col-md-6">
+                    <label class="form-label">Nombre</label>
+                    <input class="form-control" th:field="*{nombre}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Imagen</label>
+                    <input type="file" class="form-control" name="imagenFile" accept="image/*">
+                    <div class="form-text" th:if="${categoria.rutaImagen != null}">
+                        Imagen actual:
+                        <img th:src="${categoria.rutaImagen}" alt="" style="height:48px;width:48px;object-fit:cover;border-radius:8px">
+                    </div>
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/categoria/listado}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+
     </body>
 </html>

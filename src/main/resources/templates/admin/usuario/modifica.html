@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <section th:fragment="content">
+            <h1 class="mb-4" th:text="${usuario.idUsuario == null ? 'Nuevo Usuario' : 'Editar Usuario'}">Usuario</h1>
+            <div th:replace="~{admin/usuario/fragmentos :: formUsuario(${usuario}, ${roles}, ${_csrf})}"></div>
+        </section>
+    </body>
+</html>

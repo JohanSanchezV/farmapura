@@ -20,7 +20,7 @@ public class InventarioSalida {
     private Integer cantidad;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10) // VENTA/AJUSTE/OTRO caben
+    @Column(nullable = false, length = 10) 
     private MotivoSalida motivo;
 
     @Builder.Default

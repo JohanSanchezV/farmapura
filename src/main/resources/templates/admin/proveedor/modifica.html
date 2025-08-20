@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <section th:fragment="content">
+            <h1 class="mb-3" th:text="${tituloVista}">Proveedor</h1>
+
+            <form th:action="@{/admin/proveedor/guardar}" method="post" enctype="multipart/form-data"
+                  th:object="${proveedor}" class="row g-3">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div class="col-md-6">
+                    <label class="form-label">Nombre</label>
+                    <input class="form-control" th:field="*{nombre}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Cédula</label>
+                    <input class="form-control" th:field="*{cedula}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Correo</label>
+                    <input type="email" class="form-control" th:field="*{correo}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Teléfono</label>
+                    <input class="form-control" th:field="*{telefono}">
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Dirección</label>
+                    <textarea class="form-control" rows="2" th:field="*{direccion}"></textarea>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-check mt-4">
+                        <input class="form-check-input" type="checkbox" th:field="*{activo}">
+                        <label class="form-check-label">Activo</label>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <label class="form-label">Logo / Imagen</label>
+                    <input type="file" class="form-control" name="imagenFile" accept="image/*">
+                    <div class="form-text" th:if="${proveedor.rutaImagen != null}">
+                        Imagen actual:
+                        <img th:src="${proveedor.rutaImagen}" alt=""
+                             style="height:48px;width:48px;object-fit:cover;border-radius:8px">
+                    </div>
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/proveedor/listado}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </body>
+</html>

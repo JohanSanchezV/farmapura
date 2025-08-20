@@ -18,17 +18,19 @@ public class AdminCategoriaController {
     @GetMapping("/listado")
     public String listado(Model model) {
         model.addAttribute("categorias", categoriaService.getCategorias(false));
-        model.addAttribute("tituloVista", "Gestión de Categorías");
+        model.addAttribute("active", "productos"); 
         model.addAttribute("tituloPagina", "Categorías · Admin");
-        return "admin/categoria/listado";
+        model.addAttribute("view", "admin/categoria/listado :: content");
+        return "layout/admin";
     }
 
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         model.addAttribute("categoria", new Categoria());
-        model.addAttribute("tituloVista", "Nueva Categoría");
+        model.addAttribute("active", "productos");
         model.addAttribute("tituloPagina", "Nueva Categoría · Admin");
-        return "admin/categoria/modifica";
+        model.addAttribute("view", "admin/categoria/modifica :: content");
+        return "layout/admin";
     }
 
     @GetMapping("/modificar/{id}")
@@ -37,9 +39,10 @@ public class AdminCategoriaController {
         if (categoria == null) return "redirect:/admin/categoria/listado";
 
         model.addAttribute("categoria", categoria);
-        model.addAttribute("tituloVista", "Editar Categoría");
+        model.addAttribute("active", "productos");
         model.addAttribute("tituloPagina", "Editar Categoría · Admin");
-        return "admin/categoria/modifica";
+        model.addAttribute("view", "admin/categoria/modifica :: content");
+        return "layout/admin";
     }
 
     @PostMapping("/guardar")

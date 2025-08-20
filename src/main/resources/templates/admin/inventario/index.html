@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<main th:fragment="content">
+    <h1 class="mb-4">Inventario</h1>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <a class="card btn p-4 text-start" th:href="@{/admin/inventario/consulta}">
+                <div class="fs-1">🔎</div>
+                <div class="fw-semibold mt-2">Consulta de Inventario</div>
+                <small class="text-muted">Existencias por producto</small>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a class="card btn p-4 text-start" th:href="@{/admin/inventario/entradas}">
+                <div class="fs-1">🚚</div>
+                <div class="fw-semibold mt-2">Entradas de Inventario</div>
+                <small class="text-muted">Recepción / compras</small>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a class="card btn p-4 text-start" th:href="@{/admin/inventario/salidas}">
+                <div class="fs-1">📦</div>
+                <div class="fw-semibold mt-2">Salidas de Inventario</div>
+                <small class="text-muted">Ventas / ajustes / devoluciones</small>
+            </a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

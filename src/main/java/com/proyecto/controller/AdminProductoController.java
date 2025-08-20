@@ -42,18 +42,21 @@ public class AdminProductoController {
         model.addAttribute("categorias", categoriaService.getCategorias(true));
         model.addAttribute("filtroNombre", filtroNombre);
         model.addAttribute("filtroCategoria", idCategoria);
-        model.addAttribute("tituloVista", "Gestión de Productos");
+
+        model.addAttribute("active", "productos");
         model.addAttribute("tituloPagina", "Productos · Admin");
-        return "admin/producto/listado";
+        model.addAttribute("view", "admin/producto/listado :: content");
+        return "layout/admin";
     }
 
     @GetMapping("/nuevo")
     public String nuevo(Model model) {
         model.addAttribute("producto", new Producto());
         model.addAttribute("categorias", categoriaService.getCategorias(true));
-        model.addAttribute("tituloVista", "Nuevo Producto");
+        model.addAttribute("active", "productos");
         model.addAttribute("tituloPagina", "Nuevo Producto · Admin");
-        return "admin/producto/modifica";
+        model.addAttribute("view", "admin/producto/modifica :: content");
+        return "layout/admin";
     }
 
     @GetMapping("/modificar/{id}")
@@ -63,26 +66,33 @@ public class AdminProductoController {
 
         model.addAttribute("producto", p);
         model.addAttribute("categorias", categoriaService.getCategorias(true));
-        model.addAttribute("tituloVista", "Editar Producto");
+        model.addAttribute("active", "productos");
         model.addAttribute("tituloPagina", "Editar Producto · Admin");
-        return "admin/producto/modifica";
+        model.addAttribute("view", "admin/producto/modifica :: content");
+        return "layout/admin";
     }
 
     @PostMapping("/guardar")
     public String guardar(@Valid @ModelAttribute Producto producto,
                           BindingResult br,
-                          @RequestParam(name = "imagenFile", required = false) MultipartFile imagenFile,
+                          @RequestParam(name="imagenFile", required=false) MultipartFile imagenFile,
                           Model model) {
-
-        if (br.hasErrors()) {
-            model.addAttribute("categorias", categoriaService.getCategorias(true));
-            model.addAttribute("tituloVista", (producto.getIdProducto() == null) ? "Nuevo Producto" : "Editar Producto");
-            model.addAttribute("tituloPagina", (producto.getIdProducto() == null) ? "Nuevo Producto · Admin" : "Editar Producto · Admin");
-            return "admin/producto/modifica";
-        }
-
+      if (br.hasErrors()) {
+        model.addAttribute("categorias", categoriaService.getCategorias(true));
+        model.addAttribute("tituloVista", (producto.getIdProducto()==null) ? "Nuevo Producto" : "Editar Producto");
+        model.addAttribute("tituloPagina", (producto.getIdProducto()==null) ? "Nuevo Producto · Admin" : "Editar Producto · Admin");
+        return "admin/producto/modifica";
+      }
+      try {
         productoService.guardar(producto, imagenFile);
         return "redirect:/admin/producto/listado";
+      } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+        br.rejectValue("nombre", "duplicado", "Ya existe un producto con ese nombre.");
+        model.addAttribute("categorias", categoriaService.getCategorias(true));
+        model.addAttribute("tituloVista", (producto.getIdProducto()==null) ? "Nuevo Producto" : "Editar Producto");
+        model.addAttribute("tituloPagina", (producto.getIdProducto()==null) ? "Nuevo Producto · Admin" : "Editar Producto · Admin");
+        return "admin/producto/modifica";
+      }
     }
 
     @PostMapping("/eliminar/{id}")

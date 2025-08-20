@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <main th:fragment="content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="mb-0">Consulta de Inventario</h1>
+                <a class="btn btn-outline-secondary" th:href="@{/admin/inventario}">Volver</a>
+            </div>
+
+            <form class="row g-2 align-items-end mb-3" th:action="@{/admin/inventario/consulta}" method="get">
+                <div class="col-md-6">
+                    <label class="form-label">Buscar</label>
+                    <input class="form-control" type="search" name="q" placeholder="Nombre o categoría..."
+                           th:value="${filtroNombre}">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-outline-secondary me-2">Filtrar</button>
+                    <a class="btn btn-outline-dark" th:href="@{/admin/inventario/consulta}">Limpiar</a>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th><th>Producto</th><th>Categoría</th>
+                            <th class="text-end">Precio</th><th class="text-end">Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="p : ${productos}">
+                            <td th:text="${p.idProducto}">1</td>
+                            <td th:text="${p.nombre}">Nombre</td>
+                            <td th:text="${p.categoria != null ? p.categoria.nombre : '—'}">Cat</td>
+                            <td class="text-end">₡ <span th:text="${#numbers.formatDecimal(p.precio,1,'COMMA',2,'POINT')}">0.00</span></td>
+                            <td class="text-end" th:text="${p.stock}">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </body>
+</html>

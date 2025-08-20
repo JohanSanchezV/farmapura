@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <body>
+
+        <!-- Toolbar -->
+        <div th:fragment="toolbarUsuarios()">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="mb-0">Gestión de Usuarios</h1>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-success" th:href="@{/admin/usuarios/nuevo}">
+                        <i class="bi bi-plus-lg"></i> Nuevo Usuario
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtro -->
+        <div th:fragment="filtroUsuarios(q)">
+            <form class="row g-2 align-items-end mb-3" th:action="@{/admin/usuarios/listado}" method="get">
+                <div class="col-md-6">
+                    <label class="form-label">Buscar</label>
+                    <input class="form-control" type="search" name="q" placeholder="Nombre, apellidos, usuario o email..." th:value="${q}">
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-outline-secondary me-2">Filtrar</button>
+                    <a class="btn btn-outline-dark" th:href="@{/admin/usuarios/listado}">Limpiar</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabla -->
+        <div th:fragment="tablaUsuarios(usuarios, _csrf)">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width:80px">Foto</th>
+                            <th>Nombre</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th style="width:120px">Estado</th>
+                            <th style="width:260px">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${usuarios}">
+                            <td>
+                                <img th:if="${u.rutaImagen != null}" th:src="${u.rutaImagen}" alt=""
+                                     style="height:48px;width:48px;object-fit:cover;border-radius:8px">
+                                <div th:if="${u.rutaImagen == null}" class="bg-light border rounded" style="height:48px;width:48px"></div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold" th:text="${u.nombre + ' ' + (u.apellidos != null ? u.apellidos : '')}">Nombre Apellido</div>
+                                <small th:text="${#strings.defaultString(u.telefono,'')}">Teléfono</small>
+                            </td>
+                            <td th:text="${u.username}">user</td>
+                            <td th:text="${u.email}">correo@dominio.com</td>
+                            <td>
+                                <span class="badge" th:classappend="${u.activo} ? 'text-bg-success' : 'text-bg-secondary'"
+                                      th:text="${u.activo} ? 'Activo' : 'Inactivo'">Activo</span>
+                            </td>
+                            <td>
+                                <form th:action="@{'/admin/usuarios/toggle/' + ${u.idUsuario}}" method="post" class="d-inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button class="btn btn-sm btn-outline-warning">
+                                        <i class="bi bi-power"></i>
+                                        <span th:text="${u.activo} ? 'Desactivar' : 'Activar'">Desactivar</span>
+                                    </button>
+                                </form>
+
+                                <a class="btn btn-sm btn-primary" th:href="@{'/admin/usuarios/modificar/' + ${u.idUsuario}}">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
+
+                                <form th:action="@{'/admin/usuarios/eliminar/' + ${u.idUsuario}}" method="post" class="d-inline"
+                                      onsubmit="return confirm('¿Eliminar este usuario?');">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <section th:fragment="formUsuario(usuario, roles, _csrf)">
+            <form th:action="@{/admin/usuarios/guardar}" method="post" enctype="multipart/form-data"
+                  th:object="${usuario}" class="row g-3">
+
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" th:field="*{idUsuario}"/>
+                <input type="hidden" th:field="*{rutaImagen}"/>
+
+                <div class="col-md-4">
+                    <label class="form-label">Username</label>
+                    <input class="form-control" th:field="*{username}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" th:field="*{email}" required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Teléfono</label>
+                    <input class="form-control" th:field="*{telefono}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Nombre</label>
+                    <input class="form-control" th:field="*{nombre}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Apellidos</label>
+                    <input class="form-control" th:field="*{apellidos}">
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Rol</label>
+                    <select class="form-select" name="idRol">
+                        <option th:each="r : ${roles}" th:value="${r.idRol}" th:text="${r.nombre}">ROL</option>
+                    </select>
+                    <div class="form-text">Selecciona el rol a asignar (se reemplazará el actual).</div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Foto</label>
+                    <input type="file" class="form-control" name="imagenFile" accept="image/*">
+                    <div class="form-text" th:if="${usuario.rutaImagen != null}">
+                        Imagen actual:
+                        <img th:src="${usuario.rutaImagen}" alt="" style="height:48px;width:48px;object-fit:cover;border-radius:8px">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" name="passwordPlano"
+                           th:placeholder="${usuario.idUsuario == null} ? 'Obligatoria' : 'Deja en blanco para no cambiar'">
+                </div>
+
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" th:field="*{activo}" id="chkActivo">
+                        <label class="form-check-label" for="chkActivo">Activo</label>
+                    </div>
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/usuarios/listado}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+
+    </body>
+</html>

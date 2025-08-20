@@ -37,12 +37,12 @@ public class Factura {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    @Column(nullable = false, length = 9)   // 'PENDIENTE' = 9
+    @Column(nullable = false, length = 9)   
     private EstadoFactura estado = EstadoFactura.PAGADA;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    @Column(name = "forma_pago", nullable = false, length = 13) // 'TRANSFERENCIA' = 13
+    @Column(name = "forma_pago", nullable = false, length = 13) 
     private FormaPago formaPago = FormaPago.EFECTIVO;
 
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)

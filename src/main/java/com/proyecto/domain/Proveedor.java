@@ -3,11 +3,16 @@ package com.proyecto.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity @Table(name = "proveedor")
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Entity
+@Table(name = "proveedor")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Proveedor {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_proveedor")
     private Long idProveedor;
 
@@ -25,6 +30,9 @@ public class Proveedor {
 
     @Column(length = 400)
     private String direccion;
+
+    @Column(name = "ruta_imagen", length = 1024)
+    private String rutaImagen;
 
     @Builder.Default
     @Column(nullable = false)

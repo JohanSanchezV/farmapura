@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <div th:fragment="toolbarClientes()">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="mb-0">Gestión de Clientes</h1>
+                <a class="btn btn-success" th:href="@{/admin/cliente/nuevo}">
+                    <i class="bi bi-plus-lg"></i> Añadir Cliente
+                </a>
+            </div>
+        </div>
+
+        <div th:fragment="filtroClientes(filtroNombre)">
+            <form class="row g-2 align-items-end mb-3" th:action="@{/admin/cliente/listado}" method="get">
+                <div class="col-md-6">
+                    <label class="form-label">Buscar</label>
+                    <input class="form-control" type="search" name="q" placeholder="Nombre, email, cédula..."
+                           th:value="${filtroNombre}">
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-outline-secondary">Filtrar</button>
+                    <a class="btn btn-outline-dark ms-2" th:href="@{/admin/cliente/listado}">Limpiar</a>
+                </div>
+            </form>
+        </div>
+
+        <div th:fragment="tablaClientes(clientes, _csrf)">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width:70px">ID</th>
+                            <th>Nombre</th>
+                            <th>Cédula</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th style="width:210px">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="c : ${clientes}">
+                            <td th:text="${c.idCliente}">1</td>
+                            <td>
+                                <span th:text="${c.usuario != null ? c.usuario.nombre : ''}">Nombre</span>
+                                <span th:text="${c.usuario != null ? ' ' + c.usuario.apellidos : ''}">Apellidos</span>
+                            </td>
+                            <td th:text="${c.cedula}">1-2345-6789</td>
+                            <td th:text="${c.usuario != null ? c.usuario.email : ''}">correo@dominio</td>
+                            <td th:text="${c.usuario != null ? c.usuario.telefono : ''}">8888-8888</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" th:href="@{'/admin/cliente/modificar/' + ${c.idCliente}}">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </a>
+                                <form th:action="@{'/admin/cliente/eliminar/' + ${c.idCliente}}" method="post" class="d-inline">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <button class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('¿Eliminar este cliente?');">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <section th:fragment="formCliente(cliente, usuarios, _csrf)">
+            <form th:action="@{/admin/cliente/guardar}" method="post" th:object="${cliente}" class="row g-3">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <input type="hidden" th:field="*{idCliente}"/>
+
+                <div class="col-md-6">
+                    <label class="form-label">Usuario vinculado</label>
+                    <select class="form-select" th:field="*{usuario.idUsuario}" required>
+                        <option th:each="u : ${usuarios}" th:value="${u.idUsuario}"
+                                th:text="${u.nombre + ' ' + u.apellidos + ' (' + u.email + ')'}">Usuario</option>
+                    </select>
+                    <div class="form-text">Se listan usuarios que no están ya asociados a un cliente.</div>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Tipo cédula</label>
+                    <select class="form-select" th:field="*{tipoCedula}">
+                        <option value="FISICA">Física</option>
+                        <option value="JURIDICA">Jurídica</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Cédula</label>
+                    <input class="form-control" th:field="*{cedula}" required>
+                </div>
+
+                <div class="col-md-8">
+                    <label class="form-label">Dirección</label>
+                    <input class="form-control" th:field="*{direccion}">
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Teléfono alterno</label>
+                    <input class="form-control" th:field="*{telefonoAlt}">
+                </div>
+
+                <div class="col-12 d-flex gap-2">
+                    <button class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-outline-secondary" th:href="@{/admin/cliente/listado}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </body>
+</html>

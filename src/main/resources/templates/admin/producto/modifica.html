@@ -1,72 +1,9 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-    <head th:replace="layout/plantilla :: head"></head>
     <body>
-        <header th:replace="layout/plantilla :: header"></header>
-
-        <main class="container py-4">
-            <form th:action="@{/admin/producto/guardar}" th:object="${producto}" method="post" enctype="multipart/form-data"
-                  class="row g-3">
-                <input type="hidden" th:field="*{idProducto}"/>
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-
-                <div class="col-md-6">
-                    <label class="form-label">Nombre</label>
-                    <input class="form-control" th:field="*{nombre}" required/>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label">Categoría</label>
-                    <select class="form-select" th:field="*{categoria.idCategoria}" required>
-                        <option th:each="c : ${categorias}" th:value="${c.idCategoria}" th:text="${c.nombre}">Cat</option>
-                    </select>
-                </div>
-
-                <div class="col-12">
-                    <label class="form-label">Descripción</label>
-                    <textarea class="form-control" th:field="*{descripcion}" rows="2"></textarea>
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Precio (₡)</label>
-                    <input type="number" min="0" step="0.01" class="form-control" th:field="*{precio}" required/>
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Punto de Reorden</label>
-                    <input type="number" min="0" class="form-control" th:field="*{puntoReorden}" required/>
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Fecha de vencimiento</label>
-                    <input type="date" class="form-control" th:field="*{fechaVencimiento}"/>
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label">Imagen (Firebase)</label>
-                    <input type="file" name="imagenFile" class="form-control" accept="image/*"/>
-                    <small class="text-muted">Opcional. Si adjuntas, se sube al bucket y se guarda la URL.</small>
-                </div>
-
-                <div class="col-md-6" th:if="${producto.rutaImagen}">
-                    <label class="form-label d-block">Imagen actual</label>
-                    <img th:src="${producto.rutaImagen}" alt="Imagen producto" class="img-thumbnail" style="max-height:140px"/>
-                </div>
-
-                <div class="col-md-3 d-flex align-items-end">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" th:field="*{activo}" id="chkActivo"/>
-                        <label class="form-check-label" for="chkActivo">Activo</label>
-                    </div>
-                </div>
-
-                <div class="col-12">
-                    <button class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
-                    <a th:href="@{/admin/producto/listado}" class="btn btn-outline-secondary">Cancelar</a>
-                </div>
-            </form>
-        </main>
-
-        <footer th:replace="layout/plantilla :: footer"></footer>
+        <section th:fragment="content">
+            <h1 class="mb-4" th:text="${producto.idProducto == null ? 'Nuevo Producto' : 'Editar Producto'}">Producto</h1>
+            <div th:replace="~{admin/producto/fragmentos :: formProducto(${producto}, ${categorias}, ${_csrf})}"></div>
+        </section>
     </body>
 </html>

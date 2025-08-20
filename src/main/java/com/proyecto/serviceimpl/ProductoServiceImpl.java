@@ -45,14 +45,44 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     @Transactional
     public Producto guardar(Producto producto, MultipartFile imagen) {
-        producto = productoDao.save(producto);
+
+        Producto target;
+
+        if (producto.getIdProducto() != null) {
+            target = productoDao.findById(producto.getIdProducto())
+                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + producto.getIdProducto()));
+
+            target.setNombre(producto.getNombre());
+            target.setDescripcion(producto.getDescripcion());
+            target.setPrecio(producto.getPrecio());
+            target.setStock(producto.getStock());
+            target.setPuntoReorden(producto.getPuntoReorden());
+            target.setFechaVencimiento(producto.getFechaVencimiento());
+            target.setCategoria(producto.getCategoria());
+            if (producto.getActivo() != null) {
+                target.setActivo(producto.getActivo());
+            }
+
+            if ((imagen == null || imagen.isEmpty()) && producto.getRutaImagen() != null) {
+                target.setRutaImagen(producto.getRutaImagen());
+            }
+
+        } else {
+            target = producto;
+            if (target.getActivo() == null) {
+                target.setActivo(Boolean.TRUE);
+            }
+        }
+
+        target = productoDao.save(target);
 
         if (imagen != null && !imagen.isEmpty()) {
-            String url = firebase.cargaImagen(imagen, "productos", producto.getIdProducto());
-            producto.setRutaImagen(url);
-            producto = productoDao.save(producto);
+            String url = firebase.cargaImagen(imagen, "productos", target.getIdProducto());
+            target.setRutaImagen(url);
+            target = productoDao.save(target);
         }
-        return producto;
+
+        return target;
     }
 
     @Override

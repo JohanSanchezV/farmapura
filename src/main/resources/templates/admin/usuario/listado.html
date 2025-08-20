@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <body>
+        <section th:fragment="content">
+            <div th:replace="~{admin/usuario/fragmentos :: toolbarUsuarios()}"></div>
+            <div th:replace="~{admin/usuario/fragmentos :: filtroUsuarios(${q})}"></div>
+            <div th:replace="~{admin/usuario/fragmentos :: tablaUsuarios(${usuarios}, ${_csrf})}"></div>
+        </section>
+    </body>
+</html>

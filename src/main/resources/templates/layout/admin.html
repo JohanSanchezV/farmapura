@@ -1,0 +1,67 @@
+<head th:fragment="head">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${tituloPagina} ?: 'Admin · FarmaPura'">Admin · FarmaPura</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.3/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/1.11.3/font/bootstrap-icons.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+
+<body>
+    <div class="admin">
+        <aside class="aside">
+            <div class="brand">
+                <img th:src="@{/images/logo.png}" alt="FarmaPura">
+                <span>FARMA <b>PURA</b></span>
+            </div>
+            <nav class="nav">
+                <a th:classappend="${active}=='home' ? ' active' : ''" th:href="@{/admin}">
+                    <i class="bi bi-house"></i> Home
+                </a>
+                <a th:classappend="${active}=='usuarios' ? ' active' : ''" th:href="@{/admin/usuario/listado}">
+                    <i class="bi bi-people"></i> Usuarios
+                </a>
+                <a th:classappend="${active}=='proveedores' ? ' active' : ''" th:href="@{/admin/proveedor/listado}">
+                    <i class="bi bi-truck"></i> Proveedores
+                </a>
+                <a th:classappend="${active}=='productos' ? ' active' : ''" th:href="@{/admin/producto/listado}">
+                    <i class="bi bi-capsule"></i> Productos
+                </a>
+                <a th:classappend="${active}=='clientes' ? ' active' : ''" th:href="@{/admin/cliente/listado}">
+                    <i class="bi bi-person-vcard"></i> Clientes
+                </a>
+                <a th:classappend="${active}=='inventario' ? ' active' : ''" th:href="@{/admin/inventario}">
+                    <i class="bi bi-box-seam"></i> Inventario
+                </a>
+                <a th:classappend="${active}=='facturacion' ? ' active' : ''" th:href="@{/admin/facturacion}">
+                    <i class="bi bi-receipt"></i> Facturación
+                </a>
+                <a th:classappend="${active}=='reportes' ? ' active' : ''" th:href="@{/admin/reportes}">
+                    <i class="bi bi-graph-up"></i> Reportes
+                </a>
+                <form method="post" th:action="@{/logout}" class="px-3 my-3">
+                    <button class="btn btn-light w-100"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+                </form>
+            </nav>
+        </aside>
+
+        <div class="main">
+            <div class="topbar">
+                <div class="text-end">
+                    <div class="fw-semibold" sec:authentication="name">admin</div>
+                    <small>Administrador</small>
+                </div>
+            </div>
+
+            <main class="content container py-4" th:fragment="content">
+                <div th:insert="~{__${view}__}"></div>
+            </main>
+
+            <footer>© <span th:text="${#calendars.format(#dates.createNow(),'yyyy')}">2025</span> FarmaPura</footer>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
