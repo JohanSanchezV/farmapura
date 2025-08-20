@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Inventario · Editar Salida</title>
+    </head>
+    <body>
+        <section th:fragment="content">
+            <h2 class="mb-4" th:text="${salida.idSalida == null ? 'Nueva Salida' : 'Editar Salida'}"></h2>
+
+            <form method="post" th:action="@{/admin/inventario/salidas/guardar}">
+                <input type="hidden" name="idSalida" th:value="${salida.idSalida}"/>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Producto</label>
+                        <select class="form-select" name="producto.idProducto" required>
+                            <option value="" disabled selected>Seleccione…</option>
+                            <option th:each="p : ${productos}" th:value="${p.idProducto}"
+                                    th:selected="${salida.producto != null and p.idProducto == salida.producto.idProducto}"
+                                    th:text="${p.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Cantidad</label>
+                        <input class="form-control" type="number" min="1" name="cantidad" th:value="${salida.cantidad}" required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Motivo</label>
+                        <select class="form-select" name="motivo" required>
+                            <option value="" disabled selected>Seleccione…</option>
+                            <option value="VENTA"  th:selected="${salida.motivo?.name()=='VENTA'}">Venta</option>
+                            <option value="AJUSTE" th:selected="${salida.motivo?.name()=='AJUSTE'}">Ajuste</option>
+                            <option value="OTRO"   th:selected="${salida.motivo?.name()=='OTRO'}">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Observaciones</label>
+                        <textarea class="form-control" name="observaciones" rows="2" th:text="${salida.observaciones}"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-light" th:href="@{/admin/inventario/salidas}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </body>
+</html>

@@ -5,6 +5,7 @@ import com.proyecto.domain.Categoria;
 import com.proyecto.domain.Producto;
 import com.proyecto.service.FirebaseStorageService;
 import com.proyecto.service.ProductoService;
+import com.proyecto.service.dto.InventarioItem; // <-- IMPORT NECESARIO
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,13 +28,27 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     @Transactional(readOnly = true)
     public List<Producto> listarPorCategoria(Categoria categoria) {
-        return productoDao.findByCategoriaAndActivoTrue(categoria);
+        if (categoria == null || categoria.getIdCategoria() == null) {
+            return listarActivos();
+        }
+        // Si tienes un método específico en el dao úsalo; si no, filtra en memoria.
+        return productoDao.findByActivoTrue().stream()
+                .filter(p -> p.getCategoria() != null
+                          && p.getCategoria().getIdCategoria().equals(categoria.getIdCategoria()))
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Producto> buscar(String filtroNombre) {
-        return productoDao.findByNombreContainingIgnoreCaseAndActivoTrue(filtroNombre);
+    public List<Producto> buscar(String q) {
+        if (q == null || q.isBlank()) return listarActivos();
+        // Si tienes un método findByNombreContainingIgnoreCase úsalo; si no, filtra en memoria.
+        String term = q.trim().toLowerCase();
+        return productoDao.findByActivoTrue().stream()
+                .filter(p -> (p.getNombre() != null && p.getNombre().toLowerCase().contains(term)) ||
+                             (p.getCategoria() != null && p.getCategoria().getNombre() != null &&
+                              p.getCategoria().getNombre().toLowerCase().contains(term)))
+                .toList();
     }
 
     @Override
@@ -44,50 +59,28 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional
-    public Producto guardar(Producto producto, MultipartFile imagen) {
+    public Producto guardar(Producto producto, MultipartFile imagenFile) {
+        // Alta o modificación
+        var saved = productoDao.save(producto);
 
-        Producto target;
-
-        if (producto.getIdProducto() != null) {
-            target = productoDao.findById(producto.getIdProducto())
-                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + producto.getIdProducto()));
-
-            target.setNombre(producto.getNombre());
-            target.setDescripcion(producto.getDescripcion());
-            target.setPrecio(producto.getPrecio());
-            target.setStock(producto.getStock());
-            target.setPuntoReorden(producto.getPuntoReorden());
-            target.setFechaVencimiento(producto.getFechaVencimiento());
-            target.setCategoria(producto.getCategoria());
-            if (producto.getActivo() != null) {
-                target.setActivo(producto.getActivo());
-            }
-
-            if ((imagen == null || imagen.isEmpty()) && producto.getRutaImagen() != null) {
-                target.setRutaImagen(producto.getRutaImagen());
-            }
-
-        } else {
-            target = producto;
-            if (target.getActivo() == null) {
-                target.setActivo(Boolean.TRUE);
-            }
+        // Imagen en Firebase (opcional)
+        if (imagenFile != null && !imagenFile.isEmpty()) {
+            String url = firebase.cargaImagen(imagenFile, "productos", saved.getIdProducto());
+            saved.setRutaImagen(url);
+            saved = productoDao.save(saved);
         }
-
-        target = productoDao.save(target);
-
-        if (imagen != null && !imagen.isEmpty()) {
-            String url = firebase.cargaImagen(imagen, "productos", target.getIdProducto());
-            target.setRutaImagen(url);
-            target = productoDao.save(target);
-        }
-
-        return target;
+        return saved;
     }
 
     @Override
     @Transactional
     public void eliminar(Long idProducto) {
         productoDao.deleteById(idProducto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<InventarioItem> consultaInventario(String q) {
+        return productoDao.consultaInventario(q == null ? "" : q.trim());
     }
 }

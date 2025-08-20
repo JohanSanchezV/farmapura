@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Inventario · Editar Entrada</title>
+    </head>
+    <body>
+        <section th:fragment="content">
+            <h2 class="mb-4" th:text="${entrada.idEntrada == null ? 'Nueva Entrada' : 'Editar Entrada'}"></h2>
+
+            <form method="post" th:action="@{/admin/inventario/entradas/guardar}">
+                <input type="hidden" name="idEntrada" th:value="${entrada.idEntrada}"/>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Producto</label>
+                        <select class="form-select" name="producto.idProducto" required>
+                            <option value="" disabled selected>Seleccione…</option>
+                            <option th:each="p : ${productos}" th:value="${p.idProducto}"
+                                    th:selected="${entrada.producto != null and p.idProducto == entrada.producto.idProducto}"
+                                    th:text="${p.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Proveedor</label>
+                        <select class="form-select" name="proveedor.idProveedor">
+                            <option value="">(Opcional)</option>
+                            <option th:each="v : ${proveedores}" th:value="${v.idProveedor}"
+                                    th:selected="${entrada.proveedor != null and v.idProveedor == entrada.proveedor.idProveedor}"
+                                    th:text="${v.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Cantidad</label>
+                        <input class="form-control" type="number" min="1" name="cantidad" th:value="${entrada.cantidad}" required>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Precio de Costo</label>
+                        <input class="form-control" type="number" step="0.01" name="costoUnitario" th:value="${entrada.costoUnitario}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Precio de Venta (sugerido)</label>
+                        <input class="form-control" type="number" step="0.01" name="precioVentaSug" th:value="${entrada.precioVentaSug}">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">Punto de Reorden (ref.)</label>
+                        <input class="form-control" type="number" min="0" name="puntoReordenRef" th:value="${entrada.puntoReordenRef}">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label">Observaciones</label>
+                        <textarea class="form-control" name="observaciones" rows="2" th:text="${entrada.observaciones}"></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn btn-primary">Guardar</button>
+                    <a class="btn btn-light" th:href="@{/admin/inventario/entradas}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </body>
+</html>

@@ -3,12 +3,13 @@ package com.proyecto.service;
 import com.proyecto.domain.InventarioEntrada;
 import com.proyecto.domain.InventarioSalida;
 import com.proyecto.domain.Producto;
-
+import com.proyecto.service.dto.InventarioItem;
 import java.util.List;
 
 public interface InventarioService {
 
-    List<Producto> consultaInventario(String q);
+    // Consulta (usa proyección)
+    List<InventarioItem> consultaInventario(String q);
 
     // Entradas
     List<InventarioEntrada> listarEntradas(String q);

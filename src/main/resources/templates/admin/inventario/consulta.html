@@ -1,43 +1,44 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Inventario · Consulta</title>
+    </head>
     <body>
-        <main th:fragment="content">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h1 class="mb-0">Consulta de Inventario</h1>
-                <a class="btn btn-outline-secondary" th:href="@{/admin/inventario}">Volver</a>
-            </div>
+        <section th:fragment="content">
+            <h2 class="mb-4">Consulta de Inventario</h2>
 
-            <form class="row g-2 align-items-end mb-3" th:action="@{/admin/inventario/consulta}" method="get">
-                <div class="col-md-6">
-                    <label class="form-label">Buscar</label>
-                    <input class="form-control" type="search" name="q" placeholder="Nombre o categoría..."
-                           th:value="${filtroNombre}">
+            <form class="row g-2 mb-3" method="get" th:action="@{/admin/inventario/consulta}">
+                <div class="col-sm-6 col-lg-4">
+                    <input class="form-control" type="text" name="q" placeholder="Nombre o categoría..." th:value="${q}">
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-outline-secondary me-2">Filtrar</button>
-                    <a class="btn btn-outline-dark" th:href="@{/admin/inventario/consulta}">Limpiar</a>
-                </div>
+                <div class="col-auto"><button class="btn btn-outline-primary" type="submit">Filtrar</button></div>
+                <div class="col-auto"><a class="btn btn-outline-secondary" th:href="@{/admin/inventario/consulta}">Limpiar</a></div>
+                <div class="col-auto ms-auto"><a class="btn btn-light" th:href="@{/admin/inventario}">Volver</a></div>
             </form>
 
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table class="table align-middle">
+                    <thead>
                         <tr>
                             <th>ID</th><th>Producto</th><th>Categoría</th>
                             <th class="text-end">Precio</th><th class="text-end">Stock</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="p : ${productos}">
-                            <td th:text="${p.idProducto}">1</td>
-                            <td th:text="${p.nombre}">Nombre</td>
-                            <td th:text="${p.categoria != null ? p.categoria.nombre : '—'}">Cat</td>
-                            <td class="text-end">₡ <span th:text="${#numbers.formatDecimal(p.precio,1,'COMMA',2,'POINT')}">0.00</span></td>
-                            <td class="text-end" th:text="${p.stock}">0</td>
+                        <tr th:each="it : ${items}">
+                            <td th:text="${it.idProducto}">1</td>
+                            <td th:text="${it.nombreProducto}">Paracetamol 500mg</td>
+                            <td th:text="${it.nombreCategoria}">Tabletas</td>
+                            <td class="text-end" th:text="${#numbers.formatDecimal(it.precio,1,2)}">1,200.00</td>
+                            <td class="text-end" th:text="${it.stock}">0</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(items)}">
+                            <td colspan="5" class="text-center text-muted py-4">Sin resultados</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-        </main>
+        </section>
     </body>
 </html>

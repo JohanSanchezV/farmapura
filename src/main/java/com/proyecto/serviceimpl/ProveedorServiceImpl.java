@@ -21,6 +21,14 @@ public class ProveedorServiceImpl implements ProveedorService {
     @Override
     @Transactional(readOnly = true)
     public List<Proveedor> listarTodos() {
+        // Trae TODOS (activos e inactivos)
+        return proveedorDao.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Proveedor> listarActivos() {
+        // Solo activos (para selects, inventario, etc.)
         return proveedorDao.findByActivoTrue();
     }
 
@@ -30,6 +38,7 @@ public class ProveedorServiceImpl implements ProveedorService {
         if (filtroNombre == null || filtroNombre.isBlank()) {
             return proveedorDao.findByActivoTrue();
         }
+        // Busca SOLO en activos (nombre o cédula)
         return proveedorDao.buscarActivos(filtroNombre.trim());
     }
 

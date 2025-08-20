@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Inventario · Salidas</title>
+    </head>
+    <body>
+        <section th:fragment="content">
+            <h2 class="mb-4">Gestión de Inventario / Salidas de Inventario</h2>
+
+            <form class="row g-2 mb-3" method="get" th:action="@{/admin/inventario/salidas}">
+                <div class="col-sm-6 col-lg-4">
+                    <input class="form-control" type="text" name="q"
+                           placeholder="Buscar salida..."
+                           th:value="${filtro}">
+                </div>
+                <div class="col-auto"><button class="btn btn-outline-primary" type="submit">Filtrar</button></div>
+                <div class="col-auto"><a class="btn btn-outline-secondary" th:href="@{/admin/inventario/salidas}">Limpiar</a></div>
+                <div class="col-auto ms-auto">
+                    <a class="btn btn-primary" th:href="@{/admin/inventario/salidas/nuevo}">Añadir Salida</a>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>N° de Salida</th>
+                            <th>Fecha</th>
+                            <th>Producto</th>
+                            <th class="text-end">Cantidad</th>
+                            <th>Motivo</th>
+                            <th>Observaciones</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="s : ${salidas}">
+                            <td th:text="${s.idSalida}">1</td>
+                            <td th:text="${s.fecha != null ? #temporals.format(s.fecha, 'yyyy-MM-dd HH:mm') : '-'}">2025-06-01</td>
+                            <td th:text="${s.producto != null ? s.producto.nombre : '-'}">Producto</td>
+                            <td class="text-end" th:text="${s.cantidad}">0</td>
+                            <td th:text="${s.motivo}">VENTA</td>
+                            <td th:text="${s.observaciones}">-</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary"
+                                   th:href="@{/admin/inventario/salidas/modificar/{id}(id=${s.idSalida})}">
+                                    Editar
+                                </a>
+                                <form class="d-inline"
+                                      th:action="@{/admin/inventario/salidas/eliminar/{id}(id=${s.idSalida})}"
+                                      method="post"
+                                      onsubmit="return confirm('¿Eliminar salida? Esto ajustará el stock.');">
+                                    <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(salidas)}">
+                            <td colspan="7" class="text-center text-muted py-4">Sin resultados</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </body>
+</html>

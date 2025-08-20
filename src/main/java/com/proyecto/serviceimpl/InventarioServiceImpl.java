@@ -7,6 +7,7 @@ import com.proyecto.domain.InventarioEntrada;
 import com.proyecto.domain.InventarioSalida;
 import com.proyecto.domain.Producto;
 import com.proyecto.service.InventarioService;
+import com.proyecto.service.dto.InventarioItem;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,44 +22,19 @@ public class InventarioServiceImpl implements InventarioService {
     private final InventarioSalidaDao salidaDao;
     private final ProductoDao productoDao;
 
+    // ---------- Consulta ----------
     @Override
     @Transactional(readOnly = true)
-    public List<Producto> consultaInventario(String q) {
-        try {
-            if (q == null || q.isBlank()) {
-                try { return productoDao.getClass()
-                        .getMethod("findByActivoTrue")
-                        != null ? (List<Producto>) productoDao.findByActivoTrue()
-                                : productoDao.findAll();
-                } catch (NoSuchMethodException ignore) {
-                    return productoDao.findAll();
-                }
-            } else {
-                try {
-                    return (List<Producto>) productoDao.getClass()
-                            .getMethod("buscarActivos", String.class)
-                            .invoke(productoDao, q.trim());
-                } catch (Exception ignored) {
-                    try {
-                        return (List<Producto>) productoDao.getClass()
-                                .getMethod("findByNombreContainingIgnoreCase", String.class)
-                                .invoke(productoDao, q.trim());
-                    } catch (Exception e2) {
-                        return productoDao.findAll();
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            return productoDao.findAll();
-        }
+    public List<InventarioItem> consultaInventario(String q) {
+        return productoDao.consultaInventario(q == null ? "" : q.trim());
     }
 
+    // ---------- Entradas ----------
     @Override
     @Transactional(readOnly = true)
     public List<InventarioEntrada> listarEntradas(String q) {
-        return (q == null || q.isBlank())
-                ? entradaDao.findAllByOrderByFechaDesc()
-                : entradaDao.buscar(q.trim());
+        if (q == null || q.isBlank()) return entradaDao.findAll();
+        return entradaDao.buscar(q.trim());
     }
 
     @Override
@@ -77,11 +53,19 @@ public class InventarioServiceImpl implements InventarioService {
             throw new IllegalArgumentException("La cantidad de entrada debe ser mayor a 0.");
         }
 
-        e.setFecha(LocalDateTime.now());
+        // Fecha
+        if (e.getFecha() == null) {
+            e.setFecha(LocalDateTime.now());
+        }
+
+        // Guarda la entrada
         e = entradaDao.save(e);
 
-        var prod = productoDao.findById(e.getProducto().getIdProducto())
+        // Sube stock en producto
+        Long idProd = e.getProducto().getIdProducto();
+        Producto prod = productoDao.findById(idProd)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+
         int stockActual = (prod.getStock() == null) ? 0 : prod.getStock();
         prod.setStock(stockActual + e.getCantidad());
         productoDao.save(prod);
@@ -95,8 +79,10 @@ public class InventarioServiceImpl implements InventarioService {
         var e = entradaDao.findById(idEntrada)
                 .orElseThrow(() -> new IllegalArgumentException("Entrada no encontrada"));
 
-        var prod = productoDao.findById(e.getProducto().getIdProducto())
+        Long idProd = e.getProducto().getIdProducto();
+        Producto prod = productoDao.findById(idProd)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+
         int stockActual = (prod.getStock() == null) ? 0 : prod.getStock();
         if (stockActual < e.getCantidad()) {
             throw new IllegalStateException("No se puede eliminar la entrada: dejaría stock negativo.");
@@ -107,12 +93,12 @@ public class InventarioServiceImpl implements InventarioService {
         entradaDao.deleteById(idEntrada);
     }
 
+    // ---------- Salidas ----------
     @Override
     @Transactional(readOnly = true)
     public List<InventarioSalida> listarSalidas(String q) {
-        return (q == null || q.isBlank())
-                ? salidaDao.findAllByOrderByFechaDesc()
-                : salidaDao.buscar(q.trim());
+        if (q == null || q.isBlank()) return salidaDao.findAll();
+        return salidaDao.buscar(q.trim());
     }
 
     @Override
@@ -131,11 +117,19 @@ public class InventarioServiceImpl implements InventarioService {
             throw new IllegalArgumentException("La cantidad de salida debe ser mayor a 0.");
         }
 
-        s.setFecha(LocalDateTime.now());
+        // Fecha
+        if (s.getFecha() == null) {
+            s.setFecha(LocalDateTime.now());
+        }
+
+        // Guarda la salida
         s = salidaDao.save(s);
 
-        var prod = productoDao.findById(s.getProducto().getIdProducto())
+        // Baja stock en producto
+        Long idProd = s.getProducto().getIdProducto();
+        Producto prod = productoDao.findById(idProd)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+
         int stockActual = (prod.getStock() == null) ? 0 : prod.getStock();
         if (stockActual < s.getCantidad()) {
             throw new IllegalStateException("Stock insuficiente para realizar la salida.");
@@ -152,8 +146,10 @@ public class InventarioServiceImpl implements InventarioService {
         var s = salidaDao.findById(idSalida)
                 .orElseThrow(() -> new IllegalArgumentException("Salida no encontrada"));
 
-        var prod = productoDao.findById(s.getProducto().getIdProducto())
+        Long idProd = s.getProducto().getIdProducto();
+        Producto prod = productoDao.findById(idProd)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+
         int stockActual = (prod.getStock() == null) ? 0 : prod.getStock();
         prod.setStock(stockActual + s.getCantidad());
         productoDao.save(prod);
